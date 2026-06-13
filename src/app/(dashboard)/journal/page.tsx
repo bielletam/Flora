@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import { format, subDays } from "date-fns"
 import { today, moodEmoji, cn } from "@/lib/utils"
 import Header from "@/components/layout/header"
-import Button from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import MoodSelector from "@/components/mood/mood-selector"
 import type { JournalEntry, MoodValue } from "@/types"
@@ -61,8 +60,8 @@ export default function JournalPage() {
         return d >= subDays(new Date(), 6)
       }).length}-day streak 🔥`} />
 
-      {/* Week picker */}
-      <div className="flex gap-1.5 mb-4 overflow-x-auto pb-1">
+      {/* Week strip */}
+      <div className="flex gap-3 mb-4 overflow-x-auto">
         {weekDates.map((date) => {
           const hasEntry = entries.some((e) => e.date === date)
           const isToday = date === todayStr
@@ -70,59 +69,87 @@ export default function JournalPage() {
           const dayNum = new Date(date + "T00:00:00").getDate()
           return (
             <div key={date} className="flex flex-col items-center gap-1 flex-shrink-0">
-              <span className="text-[9px] text-ghost">{dow}</span>
-              <div className={cn(
-                "w-7 h-7 rounded-full flex items-center justify-center text-[11px] font-medium",
-                isToday ? "bg-sage text-white" :
-                hasEntry ? "bg-sage-light text-sage border border-sage" :
-                "bg-surface text-ghost"
-              )}>
+              <span className="text-[10px]" style={{ color: "#C4C4BC" }}>{dow}</span>
+              <div
+                className="w-8 h-8 flex items-center justify-center text-[13px] font-medium"
+                style={{
+                  background: isToday ? "#3EC9A7" : "transparent",
+                  color: isToday ? "#fff" : "#C4C4BC",
+                  borderRadius: isToday ? 8 : 0,
+                }}
+              >
                 {dayNum}
               </div>
+              {hasEntry && !isToday && (
+                <div className="w-1 h-1 rounded-full" style={{ background: "#3EC9A7" }} />
+              )}
+              {(!hasEntry || isToday) && <div className="w-1 h-1" />}
             </div>
           )
         })}
       </div>
 
       {/* Write today */}
-      <Card className="mb-4">
-        <div className="flex items-start justify-between mb-3">
-          <div>
-            <p className="text-[13px] font-semibold text-ink">{format(new Date(), "MMMM d, yyyy")}</p>
-            <p className="text-[11px] text-ghost mt-0.5">{moodEmoji(mood)} · {content.split(/\s+/).filter(Boolean).length} words</p>
+      <div className="bg-white rounded-xl border border-[#E8E8E2] mb-4 overflow-hidden">
+        <div className="p-4">
+          <div className="flex items-start justify-between mb-3">
+            <div>
+              <p className="text-[13px] font-semibold text-ink">{format(new Date(), "MMMM d, yyyy")}</p>
+              <p className="text-[11px] text-ghost mt-0.5">{moodEmoji(mood)} · {content.split(/\s+/).filter(Boolean).length} words</p>
+            </div>
+            {todayEntry && (
+              <span className="badge-sage">Already logged today</span>
+            )}
           </div>
-          {todayEntry && (
-            <span className="badge-sage">Already logged today</span>
-          )}
+
+          {/* Prompt */}
+          <div className="bg-sage-light rounded-lg p-3 mb-3 border-l-2 border-sage">
+            <p className="text-[10px] font-semibold text-sage mb-1">TODAY&apos;S PROMPT</p>
+            <p className="text-[12px] text-muted">{prompt}</p>
+          </div>
+
+          <MoodSelector value={mood} onChange={setMood} />
+
+          <textarea
+            className="w-full mt-3 min-h-[100px] border border-[#E8E8E2] rounded-lg p-3 text-[13px] text-ink placeholder:text-ghost resize-none focus:outline-none focus:ring-2 focus:ring-sage/30 focus:border-sage"
+            placeholder="Start writing..."
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+          />
         </div>
 
-        {/* Prompt */}
-        <div className="bg-sage-light rounded-lg p-3 mb-3 border-l-2 border-sage">
-          <p className="text-[10px] font-semibold text-sage mb-1">TODAY&apos;S PROMPT</p>
-          <p className="text-[12px] text-muted">{prompt}</p>
-        </div>
-
-        <MoodSelector value={mood} onChange={setMood} />
-
-        <textarea
-          className="w-full mt-3 min-h-[100px] border border-[#E8E8E2] rounded-lg p-3 text-[13px] text-ink placeholder:text-ghost resize-none focus:outline-none focus:ring-2 focus:ring-sage/30 focus:border-sage"
-          placeholder="Start writing..."
-          value={content}
-          onChange={(e) => setContent(e.target.value)}
-        />
-
-        <div className="flex items-center gap-3 mt-3">
+        {/* Footer */}
+        <div
+          className="flex items-center gap-3"
+          style={{ background: "#FAFAF8", borderTop: "1px solid #F3F3F0", padding: "10px 18px" }}
+        >
           <input
-            className="flex-1 border border-[#E8E8E2] rounded-lg px-3 py-1.5 text-[12px] text-ink placeholder:text-ghost focus:outline-none focus:ring-2 focus:ring-sage/30"
+            className="flex-1 bg-transparent focus:outline-none placeholder:text-[#C4C4BC]"
+            style={{ border: "none", fontSize: 12, color: "#6B7080" }}
             placeholder="Tags (comma separated: studying, fitness, ...)"
             value={tags}
             onChange={(e) => setTags(e.target.value)}
           />
-          <Button onClick={save} loading={saving} disabled={!content.trim()}>
-            Save →
-          </Button>
+          <button
+            onClick={save}
+            disabled={!content.trim() || saving}
+            style={{
+              background: "#3EC9A7",
+              color: "white",
+              borderRadius: 7,
+              padding: "6px 14px",
+              fontSize: 12,
+              fontWeight: 600,
+              opacity: !content.trim() || saving ? 0.5 : 1,
+              cursor: !content.trim() || saving ? "not-allowed" : "pointer",
+              transition: "opacity 0.15s",
+              flexShrink: 0,
+            }}
+          >
+            {saving ? "Saving…" : "Save →"}
+          </button>
         </div>
-      </Card>
+      </div>
 
       {/* Archive — all entries */}
       {entries.length === 0 ? (
@@ -205,8 +232,11 @@ function EntryArchive({ entries }: { entries: JournalEntry[] }) {
     ? (grouped[selectedMonth.slice(0, 4)]?.[selectedMonth] ?? [])
     : []
 
+  const totalEntries = entries.length
+  const totalMonths = years.reduce((s, y) => s + Object.keys(grouped[y]).length, 0)
+
   return (
-    <div>
+    <div className="bg-white rounded-xl border border-[#E8E8E2]" style={{ padding: "16px 18px" }}>
       <p className="text-[11px] font-semibold text-ghost uppercase tracking-[0.5px] mb-3">Archive</p>
 
       {/* Heatmap grid */}
@@ -244,14 +274,9 @@ function EntryArchive({ entries }: { entries: JournalEntry[] }) {
         ))}
       </div>
 
-      {/* Legend */}
-      <div className="flex items-center gap-1.5 mb-5">
-        <span className="text-[10px] text-ghost mr-0.5">0</span>
-        {[0.07, 0.25, 0.44, 0.63, 0.82, 1.0].map((op, i) => (
-          <div key={i} className="w-3 h-3 rounded-[3px] flex-shrink-0" style={{ background: "#3EC9A7", opacity: op }} />
-        ))}
-        <span className="text-[10px] text-ghost ml-0.5">10+</span>
-      </div>
+      <p className={selectedMonth ? "text-[11px] mb-4" : "text-[11px]"} style={{ color: "#9EA5B3" }}>
+        {totalEntries} {totalEntries === 1 ? "entry" : "entries"} across {totalMonths} {totalMonths === 1 ? "month" : "months"}
+      </p>
 
       {/* Selected month entries */}
       {selectedMonth && (

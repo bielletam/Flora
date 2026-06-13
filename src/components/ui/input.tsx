@@ -1,23 +1,44 @@
-import * as React from "react"
-
+import { InputHTMLAttributes, forwardRef } from "react"
 import { cn } from "@/lib/utils"
 
-export interface InputProps
-  extends React.InputHTMLAttributes<HTMLInputElement> {}
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+  label?: string
+  error?: string
+  leftIcon?: React.ReactNode
+}
 
-const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, type, ...props }, ref) => (
-    <input
-      type={type}
-      className={cn(
-        "flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-        className
-      )}
-      ref={ref}
-      {...props}
-    />
-  )
+const Input = forwardRef<HTMLInputElement, InputProps>(
+  ({ className, label, error, leftIcon, id, ...props }, ref) => {
+    const inputId = id ?? label?.toLowerCase().replace(/\s/g, "-")
+    return (
+      <div className="w-full">
+        {label && (
+          <label htmlFor={inputId} className="block text-xs font-medium text-ink mb-1.5">
+            {label}
+          </label>
+        )}
+        <div className="relative">
+          {leftIcon && (
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-ghost">{leftIcon}</span>
+          )}
+          <input
+            ref={ref}
+            id={inputId}
+            className={cn(
+              "w-full rounded-lg border border-[#E8E8E2] bg-white px-3 py-2 text-[13px] text-ink placeholder:text-ghost",
+              "focus:outline-none focus:ring-2 focus:ring-sage/30 focus:border-sage transition-colors",
+              "disabled:bg-surface disabled:cursor-not-allowed",
+              leftIcon && "pl-9",
+              error && "border-coral focus:ring-coral/30",
+              className
+            )}
+            {...props}
+          />
+        </div>
+        {error && <p className="mt-1 text-xs text-coral">{error}</p>}
+      </div>
+    )
+  }
 )
 Input.displayName = "Input"
-
-export { Input }
+export default Input

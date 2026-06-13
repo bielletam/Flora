@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,10 +7,107 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// TODO: Add your models here
-// Example:
-// model User {
-//   id    Int     @id @default(autoincrement())
-//   email String  @unique
-//   name  String?
-// }
+model User {
+  id             String           @id @default(cuid())
+  name           String
+  email          String           @unique
+  password       String?
+  avatar         String?
+  bio            String?
+  createdAt      DateTime         @default(now())
+  updatedAt      DateTime         @updatedAt
+  habits         Habit[]
+  completions    HabitCompletion[]
+  journalEntries JournalEntry[]
+  moodLogs       MoodLog[]
+  reports        Report[]
+}
+
+model Habit {
+  id          String            @id @default(cuid())
+  name        String
+  description String?
+  icon        String            @default("📌")
+  color       String            @default("#3EC9A7")
+  category    String            @default("General")
+  frequency   String            @default("daily")
+  targetDays  Int[]
+  isActive    Boolean           @default(true)
+  userId      String
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  completions HabitCompletion[]
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([userId])
+}
+
+model HabitCompletion {
+  id          String   @id @default(cuid())
+  habitId     String
+  habit       Habit    @relation(fields: [habitId], references: [id], onDelete: Cascade)
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date        String
+  notes       String?
+  completedAt DateTime @default(now())
+
+  @@unique([habitId, date])
+  @@index([userId, date])
+}
+
+model JournalEntry {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content   String
+  mood      Int?
+  tags      String[]
+  wordCount Int      @default(0)
+  date      String
+  prompt    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, date])
+  @@index([userId])
+}
+
+model MoodLog {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  mood        Int
+  note        String?
+  date        String
+  completedAt DateTime @default(now())
+
+  @@index([userId, date])
+}
+
+model AnalyticsCache {
+  id        String   @id @default(cuid())
+  userId    String
+  type      String
+  period    String
+  data      Json
+  createdAt DateTime @default(now())
+  expiresAt DateTime
+
+  @@unique([userId, type, period])
+}
+
+model Report {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type      String
+  period    String
+  data      Json
+  insights  String[]
+  score     Float?
+  createdAt DateTime @default(now())
+
+  @@unique([userId, type, period])
+  @@index([userId])
+}

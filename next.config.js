@@ -1,15 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  swcMinify: true,
-  images: {
-    remotePatterns: [
-      {
-        protocol: "https",
-        hostname: "**",
-      },
-    ],
+  experimental: {
+    serverComponentsExternalPackages: ["@prisma/client", "bcryptjs"],
   },
-};
+  images: {
+    remotePatterns: [],
+  },
+}
 
-module.exports = nextConfig;
+module.exports = nextConfig

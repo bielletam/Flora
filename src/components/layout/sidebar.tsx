@@ -7,14 +7,14 @@ import { cn } from "@/lib/utils"
 
 const mainNav = [
   { href: "/dashboard", label: "Dashboard", icon: DashIcon },
-  { href: "/habits", label: "Habits", icon: HabitsIcon, badge: null },
-  { href: "/journal", label: "Journal", icon: JournalIcon },
-  { href: "/mood", label: "Mood", icon: MoodIcon },
+  { href: "/habits",    label: "Habits",    icon: HabitsIcon },
+  { href: "/journal",   label: "Journal",   icon: JournalIcon },
+  { href: "/mood",      label: "Mood",      icon: MoodIcon },
 ]
 
 const dataNav = [
   { href: "/analytics", label: "Analytics", icon: ChartIcon },
-  { href: "/reports", label: "Reports", icon: ReportIcon },
+  { href: "/reports",   label: "Reports",   icon: ReportIcon },
 ]
 
 export default function Sidebar() {
@@ -27,14 +27,10 @@ export default function Sidebar() {
       {/* Logo */}
       <div className="flex items-center gap-2 px-2 pb-4 mb-3 border-b border-[#E8E8E2]">
         <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect width="28" height="28" rx="7" fill="white"/>
-          {/* left leaf */}
+          <rect width="28" height="28" rx="7" fill="white" />
           <path d="M14 20 C14 20 6 17 6 10 C6 10 10 11 14 20Z" fill="#4CAF50"/>
-          {/* right leaf */}
           <path d="M14 20 C14 20 22 17 22 10 C22 10 18 11 14 20Z" fill="#FFC107"/>
-          {/* center leaf */}
           <path d="M14 20 C14 20 11 12 14 6 C14 6 17 12 14 20Z" fill="#8BC34A"/>
-          {/* stem */}
           <rect x="13" y="20" width="2" height="4" rx="1" fill="#795548"/>
         </svg>
         <span className="font-display font-bold text-[13px] text-ink tracking-[-0.3px]">MINDBLOOM</span>

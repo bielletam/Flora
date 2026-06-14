@@ -5,27 +5,22 @@
 @tailwind utilities;
 
 :root {
-  --void: #0F0F14;
-  --canvas: #FAFAF8;
+  --canvas:  #FAFAF8;
   --surface: #F3F3F0;
-  --border: #E8E8E2;
-  --sage: #3EC9A7;
-  --violet: #7B61FF;
-  --amber: #F5A623;
-  --coral: #F0634A;
-  --sky: #3B9EFF;
-  --ink: #1A1A2E;
-  --muted: #6B7080;
-  --ghost: #9EA5B3;
+  --ink:     #1A1A2E;
+  --muted:   #6B7080;
+  --ghost:   #9EA5B3;
+  --border:  #E8E8E2;
+  --sage:    #3EC9A7;
+  --violet:  #7B61FF;
+  --amber:   #F5A623;
+  --coral:   #F0634A;
+  --sky:     #3B9EFF;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-html {
-  scroll-behavior: smooth;
-}
+html { scroll-behavior: smooth; }
 
 body {
   background: var(--canvas);
@@ -36,56 +31,27 @@ body {
 }
 
 @layer components {
-  .font-display {
-    font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
-  }
+  .font-display { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; }
+  .font-mono    { font-family: 'JetBrains Mono', ui-monospace, monospace; }
 
-  .font-mono {
-    font-family: 'JetBrains Mono', ui-monospace, monospace;
-  }
-
-  /* Card styles */
   .card {
     @apply bg-white rounded-xl border border-[#E8E8E2] shadow-card;
   }
 
-  /* Scrollbar */
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 4px;
-    height: 4px;
-  }
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: var(--border);
-    border-radius: 99px;
-  }
+  .scrollbar-thin::-webkit-scrollbar       { width: 4px; height: 4px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
 
-  /* Stat delta */
-  .delta-up {
-    @apply text-[#3EC9A7] text-xs font-medium flex items-center gap-1;
-  }
-  .delta-down {
-    @apply text-[#F0634A] text-xs font-medium flex items-center gap-1;
-  }
+  .delta-up   { @apply text-[#3EC9A7] text-xs font-medium flex items-center gap-1; }
+  .delta-down { @apply text-[#F0634A] text-xs font-medium flex items-center gap-1; }
 
-  /* Badge variants */
-  .badge-sage {
-    @apply bg-[#E8FBF5] text-[#3EC9A7] text-[10px] font-semibold px-2 py-0.5 rounded-full;
-  }
-  .badge-violet {
-    @apply bg-[#EEF0FF] text-[#7B61FF] text-[10px] font-semibold px-2 py-0.5 rounded-full;
-  }
-  .badge-amber {
-    @apply bg-[#FFF8ED] text-[#F5A623] text-[10px] font-semibold px-2 py-0.5 rounded-full;
-  }
-  .badge-coral {
-    @apply bg-[#FEF0ED] text-[#F0634A] text-[10px] font-semibold px-2 py-0.5 rounded-full;
-  }
+  .badge-sage   { @apply bg-[#E8FBF5] text-[#3EC9A7] text-[10px] font-semibold px-2 py-0.5 rounded-full; }
+  .badge-violet { @apply bg-[#EEF0FF] text-[#7B61FF] text-[10px] font-semibold px-2 py-0.5 rounded-full; }
+  .badge-amber  { @apply bg-[#FFF8ED] text-[#F5A623] text-[10px] font-semibold px-2 py-0.5 rounded-full; }
+  .badge-coral  { @apply bg-[#FEF0ED] text-[#F0634A] text-[10px] font-semibold px-2 py-0.5 rounded-full; }
 }
 
-/* Recharts overrides */
+/* Recharts */
 .recharts-tooltip-wrapper .recharts-default-tooltip {
   border-radius: 8px !important;
   border: 1px solid var(--border) !important;
@@ -93,7 +59,6 @@ body {
   font-family: 'Inter', sans-serif !important;
   font-size: 12px !important;
 }
-
 .recharts-cartesian-axis-tick-value {
   font-size: 11px !important;
   fill: var(--ghost) !important;

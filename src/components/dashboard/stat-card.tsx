@@ -17,7 +17,8 @@ export default function StatCard({ label, value, unit, delta, deltaType = "up", 
       <div className="flex items-baseline gap-1">
         <span
           className="font-display font-bold text-[26px] leading-none"
-          style={{ color: accent ?? "#1A1A2E" }}
+          className={cn(!accent && "text-ink")}
+          style={accent ? { color: accent } : undefined}
         >
           {value}
         </span>

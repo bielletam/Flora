@@ -7,6 +7,7 @@ A full-stack personal habit analytics web application built as a portfolio proje
 ## Table of Contents
 
 - [Overview](#overview)
+- [Demo](#demo)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
@@ -30,6 +31,19 @@ MINDBLOOM is a self-improvement dashboard where users can:
 - Log standalone mood scores with optional notes
 - View analytics — completion rates by category, day-of-week patterns, habit × mood correlation, and a monthly completion heatmap
 - Read auto-generated weekly reports with a performance score
+
+---
+
+## Demo
+
+Want to explore without setting anything up? Use the demo account to sign in:
+
+| Field | Value |
+|---|---|
+| Email | `alex@mindbloom.app` |
+| Password | `password123` |
+
+The demo account comes pre-loaded with habits, journal entries, mood logs, and analytics data so every page has real content to explore.
 
 ---
 

@@ -59,17 +59,17 @@ export default function DashboardLiveSection({
           delta={`${completion}% done`}
         />
         <StatCard
-          label="Mood avg"
+          label="Mood average"
           value={avgMood}
           unit="/ 5"
-          delta={moodDelta >= 0 ? `+${moodDelta} vs last wk` : `${moodDelta} vs last wk`}
+          delta={moodDelta >= 0 ? `+${moodDelta} vs last week` : `${moodDelta} vs last week`}
           deltaType={moodDelta >= 0 ? "up" : "down"}
           accent="#7B61FF"
         />
         <StatCard
           label="Journals"
           value={weekJournals}
-          unit="this wk"
+          unit="this week"
           delta={weekJournals >= 5 ? "On a streak!" : `${7 - weekJournals} missed`}
           deltaType={weekJournals >= 5 ? "up" : "down"}
         />

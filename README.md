@@ -1,4 +1,4 @@
-# MINDBLOOM
+# Flora
 
 A full-stack personal habit analytics web application built as a portfolio project. Track daily habits, log your mood and journal entries, and surface behavioral patterns through interactive data visualisations.
 

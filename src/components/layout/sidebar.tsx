@@ -33,7 +33,7 @@ export default function Sidebar() {
           <path d="M14 20 C14 20 11 12 14 6 C14 6 17 12 14 20Z" fill="#8BC34A"/>
           <rect x="13" y="20" width="2" height="4" rx="1" fill="#795548"/>
         </svg>
-        <span className="font-display font-bold text-[13px] text-ink tracking-[-0.3px]">MINDBLOOM</span>
+        <span className="font-display font-bold text-[13px] text-ink tracking-[-0.3px]">Flora</span>
       </div>
 
       {/* Main Nav */}

@@ -23,7 +23,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
               </svg>
             </div>
             <span style={{ fontWeight: 700, fontSize: '15px', letterSpacing: '-0.3px', color: '#1A1A2E' }}>
-              MINDBLOOM
+              Flora
             </span>
           </div>
 

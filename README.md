@@ -23,7 +23,7 @@ A full-stack personal habit analytics web application built as a portfolio proje
 
 ## Overview
 
-MINDBLOOM is a self-improvement dashboard where users can:
+Flora is a self-improvement dashboard where users can:
 
 - Build and maintain daily habits with target day scheduling
 - Check off habits each day and visualise weekly progress via dot indicators
@@ -129,7 +129,7 @@ The demo account comes pre-loaded with habits, journal entries, mood logs, and a
 ## Project Structure
 
 ```
-mindbloom/
+Flora/
 ├── analytics/                  # Python analytics scripts (offline)
 │   ├── data_pipeline.py        # ETL — DB → pandas DataFrames
 │   ├── eda.py                  # Exploratory data analysis
@@ -258,8 +258,8 @@ All routes require an active session (JWT cookie) except `/api/auth/*`.
 ### 1. Clone and install
 
 ```bash
-git clone https://github.com/your-username/mindbloom.git
-cd mindbloom
+git clone https://github.com/your-username/Flora.git
+cd Flora
 npm install
 ```
 

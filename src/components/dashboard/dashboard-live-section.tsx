@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { completionRate } from "@/lib/utils"
-import HabitChecklist from "./habit-checklist"
+import TodayHabits from "./today-habits"
 import StatCard from "./stat-card"
 import MoodSparkline from "./mood-sparkline"
 import { Card, CardHeader, CardTitle } from "@/components/ui/card"
@@ -41,7 +41,7 @@ export default function DashboardLiveSection({
 
   function handleToggle(habitId: string, done: boolean) {
     setCompletedTodayIds((prev) => {
-      const next = done ? [...new Set([...prev, habitId])] : prev.filter((id) => id !== habitId)
+      const next = done ? Array.from(new Set([...prev, habitId])) : prev.filter((id) => id !== habitId)
       window.dispatchEvent(new CustomEvent("today-completions-updated", { detail: { completedIds: next, date } }))
       return next
     })
@@ -51,7 +51,7 @@ export default function DashboardLiveSection({
     <>
       {/* Stat row — TODAY is now live */}
       <div className="grid grid-cols-4 gap-2.5 mb-4">
-        <StatCard label="Streak" value={streak} unit="days 🔥" delta="+3 this week" accent="#3EC9A7" />
+        <StatCard label="Streak" value={streak} unit="days" delta="+3 this week" accent="#3EC9A7" />
         <StatCard
           label="Today"
           value={doneCount}
@@ -81,27 +81,26 @@ export default function DashboardLiveSection({
         <Card className="col-span-3">
           <CardHeader>
             <CardTitle>Today&apos;s habits</CardTitle>
-            <svg width="44" height="44">
-              <circle cx="22" cy="22" r="17" fill="none" stroke="#E8E8E2" strokeWidth="4" />
+            <svg width="36" height="36">
+              <circle cx="18" cy="18" r="17" fill="none" stroke="#E7E6E2" strokeWidth="2" />
               <circle
-                cx="22" cy="22" r="17"
-                fill="none" stroke="#3EC9A7" strokeWidth="4"
+                cx="18" cy="18" r="17"
+                fill="none" stroke="#3EC9A7" strokeWidth="2"
                 strokeDasharray={circumference}
                 strokeDashoffset={circumference - (circumference * completion) / 100}
                 strokeLinecap="round"
-                transform="rotate(-90 22 22)"
+                transform="rotate(-90 18 18)"
                 style={{ transition: "stroke-dashoffset 0.4s ease" }}
               />
-              <text x="22" y="26" textAnchor="middle" fontSize="10" fontWeight="600" fill="#1A1A2E">
+              <text x="18" y="21" textAnchor="middle" fontSize="9" fontWeight="700" fill="#8A8880">
                 {completion}%
               </text>
             </svg>
           </CardHeader>
-          <HabitChecklist
+          <TodayHabits
             habits={habits}
             completedIds={completedIds}
             date={date}
-            showDots
             dotsMap={dotsMap}
             onCountChange={setDoneCount}
             onToggle={handleToggle}
@@ -118,8 +117,8 @@ export default function DashboardLiveSection({
             <MoodSparkline data={moodData} />
           </Card>
           <Card accent="violet">
-            <p className="text-[10px] font-semibold text-violet uppercase tracking-[0.5px] mb-1">🔮 Insight</p>
-            <p className="text-[12px] text-muted leading-relaxed">&ldquo;{insightText}&rdquo;</p>
+            <p className="text-[10.5px] font-bold text-violet uppercase tracking-[0.12em] mb-2">Insight</p>
+            <p className="text-[13px] text-ink leading-relaxed">{insightText}</p>
           </Card>
         </div>
       </div>

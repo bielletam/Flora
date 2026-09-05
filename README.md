@@ -278,6 +278,8 @@ npm run db:push      # Push schema to your database
 npm run db:seed      # Load demo data (Alex Chen account + habits)
 ```
 
+If hosting on Supabase, also run `prisma/enable-rls.sql` once in the Supabase SQL editor. Supabase exposes every table through its auto-generated Data API by default; the app only ever connects via Prisma (as the table owner, which bypasses RLS), so enabling RLS with no policies closes that public exposure without affecting the app.
+
 ### 4. Start the development server
 
 ```bash

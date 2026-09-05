@@ -33,14 +33,12 @@ export function Modal({ open, onClose, title, children, className }: ModalProps)
         )}
       >
         <div className="flex items-center justify-between px-5 pt-5 pb-4 border-b border-[#E8E8E2]">
-          <h2 className="font-display font-700 text-[15px] text-ink">{title}</h2>
+          <h2 className="font-display font-bold text-[18px] text-ink">{title}</h2>
           <button
             onClick={onClose}
-            className="w-7 h-7 rounded-lg flex items-center justify-center text-ghost hover:bg-surface hover:text-ink transition-colors"
+            className="text-[13px] text-ghost hover:text-ink transition-colors"
           >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" />
-            </svg>
+            Close
           </button>
         </div>
         <div className="p-5">{children}</div>

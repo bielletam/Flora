@@ -10,9 +10,7 @@ export default function ReportBars({ data }: ReportBarsProps) {
       {data.map((item) => (
         <div key={item.name}>
           <div className="flex justify-between items-center mb-1">
-            <span className="text-[11px] text-muted flex items-center gap-1">
-              <span>{item.icon}</span> {item.name}
-            </span>
+            <span className="text-[11px] text-muted">{item.name}</span>
             <span className={`text-[11px] font-medium ${item.thisWeek >= item.lastWeek ? "text-sage" : "text-coral"}`}>
               {item.thisWeek >= item.lastWeek ? "↑" : "↓"} {item.thisWeek}%
             </span>

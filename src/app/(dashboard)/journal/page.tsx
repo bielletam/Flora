@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { format, subDays } from "date-fns"
-import { today, moodEmoji, cn } from "@/lib/utils"
+import { today, moodLabel, cn } from "@/lib/utils"
 import Header from "@/components/layout/header"
 import { Card } from "@/components/ui/card"
 import MoodSelector from "@/components/mood/mood-selector"
@@ -58,7 +58,7 @@ export default function JournalPage() {
       <Header title="Journal" subtitle={`${entries.length} entries · ${entries.filter((e) => {
         const d = new Date(e.date + "T00:00:00")
         return d >= subDays(new Date(), 6)
-      }).length}-day streak 🔥`} />
+      }).length}-day streak`} />
 
       {/* Week strip */}
       <div className="flex gap-3 mb-4 overflow-x-auto">
@@ -95,7 +95,7 @@ export default function JournalPage() {
           <div className="flex items-start justify-between mb-3">
             <div>
               <p className="text-[13px] font-semibold text-ink">{format(new Date(), "MMMM d, yyyy")}</p>
-              <p className="text-[11px] text-ghost mt-0.5">{moodEmoji(mood)} · {content.split(/\s+/).filter(Boolean).length} words</p>
+              <p className="text-[11px] text-ghost mt-0.5">{content.split(/\s+/).filter(Boolean).length} words</p>
             </div>
             {todayEntry && (
               <span className="badge-sage">Already logged today</span>
@@ -108,6 +108,10 @@ export default function JournalPage() {
             <p className="text-[12px] text-muted">{prompt}</p>
           </div>
 
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[10.5px] font-bold uppercase tracking-[0.12em] text-ghost">Mood</p>
+            <p className="text-[12px] font-medium text-muted">{moodLabel(mood)}</p>
+          </div>
           <MoodSelector value={mood} onChange={setMood} />
 
           <textarea
@@ -146,7 +150,7 @@ export default function JournalPage() {
               flexShrink: 0,
             }}
           >
-            {saving ? "Saving…" : "Save →"}
+            {saving ? "Saving…" : "Save"}
           </button>
         </div>
       </div>
@@ -161,25 +165,39 @@ export default function JournalPage() {
   )
 }
 
-function EntryCard({ entry }: { entry: JournalEntry }) {
+const MOOD_INK = ["#57554E", "#3F6B62", "#0F766E", "#115E59", "#0B4F4A"]
+const MOOD_BG = ["#F1F0EC", "#EAF4F1", "#E4F5F1", "#DDF2ED", "#D6EFE9"]
+
+function EntryRow({ entry }: { entry: JournalEntry }) {
   const [expanded, setExpanded] = useState(false)
-  const isLong = entry.wordCount > 40
+  const isLong = entry.content.length > 130
+  const moodIdx = entry.mood ? entry.mood - 1 : 2
 
   return (
-    <div className="py-[14px] border-b border-[#E8E8E2] last:border-0">
-      <div className="flex justify-between items-start mb-1.5">
-        <span className="text-[14px] font-semibold text-ink">
+    <div className="border-t border-[#F1F0EC] py-[14px] first:border-t-0">
+      <div className="flex items-baseline justify-between gap-4">
+        <p className="text-[15px] font-semibold text-ink">
           {format(new Date(entry.date + "T00:00:00"), "MMMM d, yyyy")}
-        </span>
-        <span className="text-[12px]" style={{ color: "#9EA5B3" }}>
-          {entry.mood ? moodEmoji(entry.mood as MoodValue) : ""} · {entry.wordCount} words
-        </span>
+        </p>
+        <div className="flex items-center gap-2.5 flex-shrink-0">
+          {entry.mood && (
+            <span
+              className="text-[11px] font-bold rounded-md px-2 py-0.5"
+              style={{ color: MOOD_INK[moodIdx], background: MOOD_BG[moodIdx] }}
+            >
+              {entry.mood}/5
+            </span>
+          )}
+          <span className="text-[12px] text-[#9A988F]">{entry.wordCount} words</span>
+        </div>
       </div>
-      <p className={cn("text-[12px] text-muted", !expanded && "line-clamp-2")}>{entry.content}</p>
+      <p className="text-[13.5px] leading-[1.55] text-[#57554E] mt-1.5">
+        {isLong && !expanded ? entry.content.slice(0, 128).trim() + "…" : entry.content}
+      </p>
       {isLong && (
         <button
           onClick={() => setExpanded((v) => !v)}
-          className="flex items-center gap-1 mt-1.5 text-[11px] font-medium text-sage hover:text-sage/80 transition-colors"
+          className="inline-flex items-center gap-1.5 mt-2 text-[12.5px] font-semibold text-[#0F766E] hover:text-[#115E59] transition-colors"
         >
           {expanded ? "Show less" : "Read more"}
           <svg
@@ -191,13 +209,9 @@ function EntryCard({ entry }: { entry: JournalEntry }) {
         </button>
       )}
       {entry.tags.length > 0 && (
-        <div className="flex gap-1 mt-1.5">
-          {entry.tags.slice(0, 3).map((tag) => (
-            <span
-              key={tag}
-              className="text-[11px] font-medium px-2 py-0.5 rounded-full"
-              style={{ color: "#3EC9A7", background: "rgba(62,201,167,0.1)" }}
-            >
+        <div className="flex flex-wrap gap-1.5 mt-2.5">
+          {entry.tags.map((tag) => (
+            <span key={tag} className="text-[11.5px] font-semibold text-[#0F766E] bg-[#E4F5F1] rounded-md px-2.5 py-1">
               {tag}
             </span>
           ))}
@@ -207,90 +221,80 @@ function EntryCard({ entry }: { entry: JournalEntry }) {
   )
 }
 
-const MONTH_ABBR = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-
-function cellOpacity(count: number) {
-  if (count === 0) return 0.07
-  return Math.min(1.0, 0.07 + (count / 10) * 0.93)
+function FilterPill({ label, count, active, onClick }: { label: string; count: number; active: boolean; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className={cn(
+        "flex items-center gap-2 rounded-full border-[1.5px] pl-[15px] pr-2 py-1.5 transition-colors",
+        active ? "bg-[#0F766E] border-[#0F766E]" : "bg-white border-[#E7E6E2] hover:border-ghost"
+      )}
+    >
+      <span className={cn("text-[13px] font-semibold", active ? "text-white" : "text-[#57554E]")}>{label}</span>
+      <span
+        className={cn(
+          "min-w-[20px] text-center text-[11.5px] font-bold rounded-full px-1.5 py-0.5",
+          active ? "bg-white text-[#0F766E]" : "bg-[#E4F5F1] text-[#0F766E]"
+        )}
+      >
+        {count}
+      </span>
+    </button>
+  )
 }
 
 function EntryArchive({ entries }: { entries: JournalEntry[] }) {
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null)
 
-  const grouped: Record<string, Record<string, JournalEntry[]>> = {}
+  const grouped: Record<string, JournalEntry[]> = {}
   for (const entry of entries) {
-    const d = new Date(entry.date + "T00:00:00")
-    const year = String(d.getFullYear())
-    const month = format(d, "yyyy-MM")
-    if (!grouped[year]) grouped[year] = {}
-    if (!grouped[year][month]) grouped[year][month] = []
-    grouped[year][month].push(entry)
+    const key = format(new Date(entry.date + "T00:00:00"), "yyyy-MM")
+    if (!grouped[key]) grouped[key] = []
+    grouped[key].push(entry)
   }
-  const years = Object.keys(grouped).sort((a, b) => Number(b) - Number(a))
+  const monthKeys = Object.keys(grouped).sort((a, b) => a.localeCompare(b))
 
-  const selectedEntries = selectedMonth
-    ? (grouped[selectedMonth.slice(0, 4)]?.[selectedMonth] ?? [])
-    : []
+  const sorted = [...entries].sort((a, b) => b.date.localeCompare(a.date))
+  const year = sorted[0] ? new Date(sorted[0].date + "T00:00:00").getFullYear() : new Date().getFullYear()
 
-  const totalEntries = entries.length
-  const totalMonths = years.reduce((s, y) => s + Object.keys(grouped[y]).length, 0)
+  const filtered = selectedMonth ? (grouped[selectedMonth] ?? []) : entries
+  const sortedFiltered = [...filtered].sort((a, b) => b.date.localeCompare(a.date))
+
+  const filterHeading = selectedMonth
+    ? `${format(new Date(selectedMonth + "-01"), "MMMM")} ${year}`
+    : `All entries · ${year}`
 
   return (
-    <div className="bg-white rounded-xl border border-[#E8E8E2]" style={{ padding: "16px 18px" }}>
-      <p className="text-[11px] font-semibold text-ghost uppercase tracking-[0.5px] mb-3">Archive</p>
-
-      {/* Heatmap grid */}
-      <div className="space-y-3 mb-4">
-        {years.map((year) => (
-          <div key={year} className="flex items-center gap-3">
-            <span className="text-[12px] font-semibold text-muted w-10 flex-shrink-0 text-right">{year}</span>
-            <div className="flex gap-[6px]">
-              {MONTH_ABBR.map((abbr, idx) => {
-                const monthKey = `${year}-${String(idx + 1).padStart(2, "0")}`
-                const count = grouped[year]?.[monthKey]?.length ?? 0
-                const isSelected = selectedMonth === monthKey
-                const opacity = isSelected ? 1.0 : cellOpacity(count)
-                return (
-                  <div key={idx} className="flex flex-col items-center gap-[4px]">
-                    <span className="text-[10px] leading-none" style={{ color: "#9EA5B3" }}>{abbr}</span>
-                    <button
-                      title={`${abbr} ${year} · ${count} ${count === 1 ? "entry" : "entries"}`}
-                      onClick={() => setSelectedMonth(isSelected ? null : monthKey)}
-                      className="rounded-[4px] transition-opacity focus:outline-none"
-                      style={{
-                        width: 36,
-                        height: 36,
-                        background: "#3EC9A7",
-                        opacity,
-                        border: isSelected ? "2px solid #3EC9A7" : "2px solid transparent",
-                        flexShrink: 0,
-                      }}
-                    />
-                  </div>
-                )
-              })}
-            </div>
-          </div>
-        ))}
+    <div className="bg-white rounded-2xl shadow-card">
+      <div className="px-6 pt-5 pb-[18px] border-b border-[#F1F0EC]">
+        <div className="flex items-center justify-between gap-4">
+          <p className="text-[10.5px] font-bold uppercase tracking-[0.14em] text-[#A6A49C]">Archive</p>
+          <p className="text-[14px] font-semibold text-ink">{year}</p>
+        </div>
+        <div className="flex flex-wrap gap-2 mt-3.5">
+          <FilterPill label="All entries" count={entries.length} active={selectedMonth === null} onClick={() => setSelectedMonth(null)} />
+          {monthKeys.map((key) => (
+            <FilterPill
+              key={key}
+              label={format(new Date(key + "-01"), "MMMM")}
+              count={grouped[key].length}
+              active={selectedMonth === key}
+              onClick={() => setSelectedMonth(key)}
+            />
+          ))}
+        </div>
       </div>
 
-      <p className={selectedMonth ? "text-[11px] mb-4" : "text-[11px]"} style={{ color: "#9EA5B3" }}>
-        {totalEntries} {totalEntries === 1 ? "entry" : "entries"} across {totalMonths} {totalMonths === 1 ? "month" : "months"}
-      </p>
-
-      {/* Selected month entries */}
-      {selectedMonth && (
-        <div>
-          <p className="text-[11px] font-semibold text-ghost uppercase tracking-[0.5px] mb-1">
-            {format(new Date(selectedMonth + "-01"), "MMMM yyyy")}
-            <span className="ml-1.5 normal-case font-normal">· {selectedEntries.length} {selectedEntries.length === 1 ? "entry" : "entries"}</span>
-          </p>
-          {selectedEntries.length === 0
-            ? <p className="text-[12px] text-ghost py-2">No entries this month.</p>
-            : selectedEntries.map((entry) => <EntryCard key={entry.id} entry={entry} />)
-          }
+      <div className="px-6 pt-4 pb-[22px]">
+        <div className="flex items-baseline justify-between pb-1">
+          <p className="text-[10.5px] font-bold uppercase tracking-[0.14em] text-[#57554E]">{filterHeading}</p>
+          <p className="text-[12.5px] text-[#9A988F]">{sortedFiltered.length} shown</p>
         </div>
-      )}
+        {sortedFiltered.length === 0
+          ? <p className="text-[12px] text-ghost py-4">No entries.</p>
+          : sortedFiltered.map((entry) => <EntryRow key={entry.id} entry={entry} />)
+        }
+      </div>
     </div>
   )
 }

@@ -90,7 +90,7 @@ export interface AnalyticsData {
     avgMoodDone: number
     avgMoodSkip: number
   }[]
-  insights: string[]
+  insights: { type: "pattern" | "attention"; text: string }[]
 }
 
 export interface WeeklyReport {

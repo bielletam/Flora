@@ -8,7 +8,7 @@ export async function getDashboardStats(userId: string) {
   const todayStr = today()
 
   const monthDates = getCurrentMonthDates()
-  const allDates = [...new Set([...last28, ...monthDates])]
+  const allDates = Array.from(new Set([...last28, ...monthDates]))
 
   const [habits, completions, moods, monthMoods, journals] = await Promise.all([
     prisma.habit.findMany({ where: { userId, isActive: true } }),
@@ -201,16 +201,16 @@ function generateInsights(data: {
 }) {
   const { habits, completions, moods, dowStats, categoryStats } = data
   const last28 = getLast28Days()
-  const insights: string[] = []
+  const insights: { type: "pattern" | "attention"; text: string }[] = []
 
   const bestDow = [...dowStats].sort((a, b) => b.rate - a.rate)[0]
   const dowNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"]
-  if (bestDow) insights.push(`${dowNames[bestDow.dow]} is your most consistent day — ${bestDow.rate}% completion rate`)
+  if (bestDow) insights.push({ type: "pattern", text: `${dowNames[bestDow.dow]} is your most consistent day — ${bestDow.rate}% completion rate` })
 
   const weekendAvg = (dowStats[0].rate + dowStats[6].rate) / 2
   const weekdayAvg = dowStats.slice(1, 6).reduce((s, d) => s + d.rate, 0) / 5
   if (weekdayAvg - weekendAvg > 20) {
-    insights.push(`Weekend habits drop ${Math.round(weekdayAvg - weekendAvg)}% vs weekdays. Consider lighter weekend goals`)
+    insights.push({ type: "pattern", text: `Weekend habits drop ${Math.round(weekdayAvg - weekendAvg)}% vs weekdays. Consider lighter weekend goals` })
   }
 
   const highMoodDays = moods.filter((m) => m.mood >= 4).map((m) => m.date)
@@ -218,14 +218,14 @@ function generateInsights(data: {
   const highDayHabitCount = highMoodDays.map((d) => completions.filter((c) => c.date === d).length)
   const avgHabitsOnHighMood = highDayHabitCount.length ? highDayHabitCount.reduce((s, v) => s + v, 0) / highDayHabitCount.length : 0
   if (avgHabitsOnHighMood >= 3) {
-    insights.push(`Completing ${Math.round(avgHabitsOnHighMood)}+ habits correlates with great mood days`)
+    insights.push({ type: "pattern", text: `Completing ${Math.round(avgHabitsOnHighMood)}+ habits correlates with great mood days` })
   }
 
   const lowestCat = Object.entries(categoryStats)
     .map(([cat, { done, expected }]) => ({ cat, rate: completionRate(done, expected) }))
     .sort((a, b) => a.rate - b.rate)[0]
   if (lowestCat && lowestCat.rate < 60) {
-    insights.push(`${lowestCat.cat} habits need attention — only ${lowestCat.rate}% completion rate`)
+    insights.push({ type: "attention", text: `${lowestCat.cat} habits need attention — only ${lowestCat.rate}% completion rate` })
   }
 
   return insights

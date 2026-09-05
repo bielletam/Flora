@@ -4,7 +4,7 @@ import { getDashboardStats } from "@/lib/analytics"
 import { today } from "@/lib/utils"
 import Header from "@/components/layout/header"
 import DashboardLiveSection from "@/components/dashboard/dashboard-live-section"
-import Heatmap from "@/components/dashboard/heatmap"
+import CategoryHeatmap from "@/components/dashboard/category-heatmap"
 import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 
 export const dynamic = "force-dynamic"
@@ -44,7 +44,7 @@ export default async function DashboardPage() {
   return (
     <>
       <Header
-        title={`${greeting}, ${firstName} 👋`}
+        title={`${greeting}, ${firstName}`}
         subtitle={`${format(new Date(), "EEEE, MMMM d")} · ${stats.todayTotal} habits today`}
       />
 
@@ -68,7 +68,7 @@ export default async function DashboardPage() {
           <CardTitle>Completion heatmap</CardTitle>
           <span className="badge-sage">{monthLabel}</span>
         </CardHeader>
-        <Heatmap
+        <CategoryHeatmap
           habits={stats.habits}
           data={stats.monthCompletedByDate}
           dates={stats.monthDates}

@@ -97,3 +97,22 @@ export function monthPeriod(date: Date = new Date()): string {
 export const HABIT_ICONS = ["💧", "🏃", "📖", "🧘", "💻", "📝", "🎯", "🍎", "💪", "🌙", "🎨", "🎵", "🌿", "⚡", "🔥", "🧠", "❤️", "🏋️"]
 export const HABIT_COLORS = ["#3EC9A7", "#7B61FF", "#F5A623", "#F0634A", "#3B9EFF", "#1A1A2E", "#9EA5B3"]
 export const HABIT_CATEGORIES = ["Health", "Mind", "Learning", "Social", "Career", "Fitness", "Creativity", "General"]
+
+const CATEGORY_COLORS: Record<string, { tint: string; ink: string }> = {
+  Health: { tint: "#E4F5F1", ink: "#0F766E" },
+  Mind: { tint: "#EDEBF7", ink: "#5B4FA8" },
+  Fitness: { tint: "#FBEDE6", ink: "#A85A32" },
+  Learning: { tint: "#E8EFF8", ink: "#3A6494" },
+  Social: { tint: "#FCE8EE", ink: "#B4557A" },
+  Career: { tint: "#FEF3E8", ink: "#A6740C" },
+  Creativity: { tint: "#F3E8FE", ink: "#8347B0" },
+  General: { tint: "#F1F0EC", ink: "#6B6960" },
+}
+const CATEGORY_FALLBACK = Object.values(CATEGORY_COLORS)
+
+export function categoryColor(category: string): { tint: string; ink: string } {
+  if (CATEGORY_COLORS[category]) return CATEGORY_COLORS[category]
+  let hash = 0
+  for (let i = 0; i < category.length; i++) hash = (hash * 31 + category.charCodeAt(i)) >>> 0
+  return CATEGORY_FALLBACK[hash % CATEGORY_FALLBACK.length]
+}

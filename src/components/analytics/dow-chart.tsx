@@ -1,41 +1,36 @@
 "use client"
 
-import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell } from "recharts"
+import { cn } from "@/lib/utils"
 
 interface DowChartProps {
   data: { dow: number; rate: number }[]
 }
 
-const DOW_LABELS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+const DOW_LABELS = ["S", "M", "T", "W", "T", "F", "S"]
 
 export default function DowChart({ data }: DowChartProps) {
-  const chartData = data.map((d) => ({ label: DOW_LABELS[d.dow], rate: d.rate, dow: d.dow }))
+  const items = data.map((d) => ({ label: DOW_LABELS[d.dow], rate: d.rate, dow: d.dow }))
+  const max = Math.max(...items.map((i) => i.rate), 1)
+  const peakRate = Math.max(...items.map((i) => i.rate))
 
   return (
-    <ResponsiveContainer width="100%" height={100}>
-      <BarChart data={chartData} barSize={20} margin={{ top: 4, right: 0, left: 0, bottom: 0 }}>
-        <XAxis dataKey="label" axisLine={false} tickLine={false} tick={{ fontSize: 10, fill: "#9EA5B3" }} />
-        <Tooltip
-          content={({ active, payload }) => {
-            if (!active || !payload?.length) return null
-            const d = payload[0].payload
-            return (
-              <div className="bg-white border border-[#E8E8E2] rounded-lg px-2 py-1 shadow-card text-[11px]">
-                <span className="font-medium text-ink">{d.label}: {d.rate}%</span>
-              </div>
-            )
-          }}
-          cursor={{ fill: "transparent" }}
-        />
-        <Bar dataKey="rate" radius={[4, 4, 0, 0]}>
-          {chartData.map((entry) => (
-            <Cell
-              key={entry.dow}
-              fill={entry.dow === 0 || entry.dow === 6 ? "#E8E8E2" : "#3EC9A7"}
+    <div className="flex items-end justify-between gap-2 h-[140px] px-1">
+      {items.map((d) => {
+        const isPeak = d.rate === peakRate && d.rate > 0
+        const heightPct = Math.max(6, (d.rate / max) * 100)
+        return (
+          <div key={d.dow} className="flex flex-col items-center flex-1 h-full justify-end">
+            <span className={cn("text-[12px] font-bold mb-1.5", isPeak ? "text-[#0F766E]" : "text-muted")}>
+              {d.rate}%
+            </span>
+            <div
+              className="w-full rounded-t-md transition-all duration-700"
+              style={{ height: `${heightPct}%`, background: isPeak ? "#0F766E" : "#6FD9C2" }}
             />
-          ))}
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
+            <span className="text-[11px] text-ghost mt-1.5">{d.label}</span>
+          </div>
+        )
+      })}
+    </div>
   )
 }
